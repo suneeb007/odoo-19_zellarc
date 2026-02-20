@@ -1,0 +1,26 @@
+name: Deploy Odoo
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: SSH Deploy
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            set -e
+            cd /home/deploy/odoo
+            git pull origin main
+            docker compose -f deploy/hostinger/docker-compose.hostinger.yml pull
+            docker compose -f deploy/hostinger/docker-compose.hostinger.yml down || true
+            docker compose -f deploy/hostinger/docker-compose.hostinger.yml up -d
+            # cleanup old images (optional)
+            docker image prune -f || true
