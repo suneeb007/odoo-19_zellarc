@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: zellarc_technologies
+      POSTGRES_USER: suneeb
+      POSTGRES_PASSWORD: "suneeb19931996@"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  odoo:
+    image: odoo:19.0
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8069:8069"
+    restart: unless-stopped
+    environment:
+      HOST: db
+      USER: suneeb
+      PASSWORD: "suneeb19931996@"
+    volumes:
+      - ./addons:/mnt/extra-addons:ro
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O- http://localhost:8069 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+
+volumes:
+  db_data:
+    driver: local
