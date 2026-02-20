@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="action_flight_bookings" model="ir.actions.act_window">
+    <field name="name">Flight Bookings</field>
+    <field name="res_model">flight.booking</field>
+    <field name="view_mode">list,form</field>
+    <field name="help">Create flight bookings and convert to sales orders.</field>
+  </record>
+  
+    <!-- Customer commission views/actions -->
+    <record id="view_flight_booking_customer_commission_tree" model="ir.ui.view">
+      <field name="name">flight.booking.customer.commission.tree</field>
+      <field name="model">flight.booking.customer.commission</field>
+      <field name="arch" type="xml">
+        <list>
+          <field name="booking_id"/>
+          <field name="commission_type"/>
+          <field name="percentage"/>
+          <field name="base_amount"/>
+          <field name="commission_amount"/>
+        </list>
+      </field>
+    </record>
+
+    <record id="view_flight_booking_customer_commission_form" model="ir.ui.view">
+      <field name="name">flight.booking.customer.commission.form</field>
+      <field name="model">flight.booking.customer.commission</field>
+      <field name="arch" type="xml">
+        <form string="Customer Commission">
+          <group>
+            <field name="booking_id"/>
+            <field name="commission_type"/>
+            <field name="percentage"/>
+            <field name="base_amount" readonly="1"/>
+            <field name="commission_amount" readonly="1"/>
+          </group>
+        </form>
+      </field>
+    </record>
+
+    <record id="action_flight_booking_customer_commissions" model="ir.actions.act_window">
+      <field name="name">Customer Commissions</field>
+      <field name="res_model">flight.booking.customer.commission</field>
+      <field name="view_mode">list,form</field>
+      <field name="view_id" ref="view_flight_booking_customer_commission_tree"/>
+      <field name="context">{}</field>
+    </record>
+
+    <!-- Supplier commission views/actions -->
+    <record id="view_flight_booking_supplier_commission_tree" model="ir.ui.view">
+      <field name="name">flight.booking.supplier.commission.tree</field>
+      <field name="model">flight.booking.supplier.commission</field>
+      <field name="arch" type="xml">
+        <list>
+          <field name="booking_id"/>
+          <field name="commission_type"/>
+          <field name="percentage"/>
+          <field name="base_amount"/>
+          <field name="commission_amount"/>
+        </list>
+      </field>
+    </record>
+
+    <record id="view_flight_booking_supplier_commission_form" model="ir.ui.view">
+      <field name="name">flight.booking.supplier.commission.form</field>
+      <field name="model">flight.booking.supplier.commission</field>
+      <field name="arch" type="xml">
+        <form string="Supplier Commission">
+          <group>
+            <field name="booking_id"/>
+            <field name="commission_type"/>
+            <field name="percentage"/>
+            <field name="base_amount" readonly="1"/>
+            <field name="commission_amount" readonly="1"/>
+          </group>
+        </form>
+      </field>
+    </record>
+
+    <record id="action_flight_booking_supplier_commissions" model="ir.actions.act_window">
+      <field name="name">Supplier Commissions</field>
+      <field name="res_model">flight.booking.supplier.commission</field>
+      <field name="view_mode">list,form</field>
+      <field name="view_id" ref="view_flight_booking_supplier_commission_tree"/>
+      <field name="context">{}</field>
+    </record>
+
+  <menuitem id="menu_travel_root" name="Air Tickets" sequence="90"/>
+  <menuitem id="menu_travel_sales" name="Flight Bookings" parent="menu_travel_root" action="action_flight_bookings"/>
+
+  <record id="view_flight_booking_tree" model="ir.ui.view">
+    <field name="name">flight.booking.list</field>
+    <field name="model">flight.booking</field>
+    <field name="arch" type="xml">
+      <list>
+        <field name="name"/>
+        <field name="ticket_no"/>
+        <field name="passenger_name"/>
+        <field name="client_id"/>
+        <field name="travel_date"/>
+        <field name="yq_tax"/>
+        <field name="yr_tax"/>
+        <field name="other_taxes"/>
+        <field name="total_airline_tax"/>
+        <field name="total_fare"/>
+      </list>
+    </field>
+  </record>
+
+  <record id="action_flight_booking_suppliers" model="ir.actions.act_window">
+    <field name="name">Suppliers</field>
+    <field name="res_model">res.partner</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+
+  <record id="view_flight_booking_form" model="ir.ui.view">
+    <field name="name">flight.booking.form</field>
+    <field name="model">flight.booking</field>
+    <field name="arch" type="xml">
+      <form string="Flight Booking" class="flight_booking_form">
+        <header>
+          <button name="action_create_sale_order" type="object" string="Create Sale Order" class="btn btn-primary o_form_button_primary"
+            modifiers="{'invisible':[('sale_order_id','!=', False)]}"/>
+          
+          <button name="%(action_flight_booking_create_purchase_server)d" type="action" string="Create Purchase Order" class="btn btn-secondary"
+            modifiers="{'invisible':[('purchase_order_id','!=', False)]}"/>
+          
+          <field name="sale_order_id" invisible="1"/>
+          <field name="purchase_order_id" invisible="1"/>
+          <field name="sale_count" invisible="1"/>
+          <field name="purchase_count" invisible="1"/>
+          <field name="invoice_count" invisible="1"/>
+          <field name="attachment_count" invisible="1"/>
+
+          <button name="action_open_sales" type="object" class="oe_stat_button o_stat_button" string="Sales" icon="fa-file-text">
+            <field name="sale_count" widget="statinfo"/>
+          </button>
+          <button name="action_open_purchases" type="object" class="oe_stat_button o_stat_button" string="Purchases" icon="fa-shopping-cart">
+            <field name="purchase_count" widget="statinfo"/>
+          </button>
+          <button name="action_open_invoices" type="object" class="oe_stat_button o_stat_button" string="Invoices" icon="fa-file-invoice">
+            <field name="invoice_count" widget="statinfo"/>
+          </button>
+          <button name="action_open_attachments" type="object" class="oe_stat_button o_stat_button" string="Attachments" icon="fa-paperclip">
+            <field name="attachment_count" widget="statinfo"/>
+          </button>
+          <button name="%(action_flight_booking_bulk_upload)d" type="action" string="Bulk Upload" class="btn btn-secondary"/>
+        </header>
+        <sheet>
+          <div class="o_form_sheet_bg">
+            <group>
+                <group>
+                <field name="name"/>
+                <field name="ticket_no"/>
+                <field name="airline_pnr" string="Airline PNR"/>
+              </group>
+              <group>
+                <field name="date_issue"/>
+                <field name="travel_date"/>
+              </group>
+              <group>
+                <field name="total_fare" class="o_total_fare" readonly="1"/>
+                <field name="currency_id"/>
+              </group>
+            </group>
+            <notebook>
+              <page string="Passenger" icon="fa-user">
+                <group>
+                  <field name="passenger_name"/>
+                  <field name="client_id"/>
+                </group>
+              </page>
+              <page string="Flight Info" icon="fa-plane">
+                <group>
+                  <field name="carrier_code"/>
+                  <field name="pnr"/>
+                </group>
+                <group>
+                  <field name="sectors"/>
+                </group>
+                <group>
+                  <field name="ticket_type"/>
+                  <field name="fare_basis"/>
+                  <field name="rbd"/>
+                  <field name="booking_class"/>
+                </group>
+              </page>
+              <page string="Fare Info" icon="fa-money">
+                <group>
+                  <label for="supplier_id" string="Supplier"/>
+                  <group>
+                    <field name="supplier_id" domain="[]" options="{'no_create': False}"/>
+                    <button name="%(action_flight_booking_suppliers)d" type="action" string="Open" class="btn btn-sm o_form_button_secondary"/>
+                  </group>
+                  <label for="basic_fare" string="Basic Fare"/>
+                  <field name="basic_fare" widget="monetary"/>
+                  <group>
+                    <field name="yq_tax" widget="monetary"/>
+                    <field name="yr_tax" widget="monetary"/>
+                    <field name="other_taxes" widget="monetary"/>
+                  </group>
+                  <group>
+                    <field name="total_airline_tax" widget="monetary" readonly="1"/>
+                    <field name="margin" widget="monetary"/>
+                    <field name="airline_total" widget="monetary" readonly="1"/>
+                  </group>
+                </group>
+                <group>
+                  <field name="ticketing_staff"/>
+                  <field name="booking_pcc"/>
+                  <field name="branch_code"/>
+                </group>
+              </page>
+              <page string="Commissions" icon="fa-percent">
+                <group>
+                  <group>
+                    <separator string="Customer Commissions"/>
+                    <group>
+                      <button name="%(action_flight_booking_customer_commissions)d" type="action" string="Customer Commissions" class="oe_stat_button"/>
+                    </group>
+                    <group>
+                      <field name="customer_commission_total" readonly="1"/>
+                      <field name="net_receivable_from_customer" readonly="1"/>
+                    </group>
+                  </group>
+                  <group>
+                    <separator string="Supplier Commissions"/>
+                    <group>
+                      <button name="%(action_flight_booking_supplier_commissions)d" type="action" string="Supplier Commissions" class="oe_stat_button"/>
+                    </group>
+                    <group>
+                      <field name="supplier_commission_total" readonly="1"/>
+                      <field name="net_payable_to_supplier" readonly="1"/>
+                    </group>
+                  </group>
+                </group>
+              </page>
+            </notebook>
+          </div>
+
+        </sheet>
+
+        <chatter reload_on_post="True"/>
+      </form>
+    </field>
+  </record>
+</odoo>

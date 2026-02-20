@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Add a clickable booking reference in Sale Order header -->
+    <record id="view_order_form_inherit_flight_booking" model="ir.ui.view">
+        <field name="name">sale.order.form.flight.booking.inherit</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <field name="flight_booking_id" readonly="1" widget="many2one"/>
+                <button name="%(action_open_flight_booking_sale)d" type="action" string="Open Booking" class="btn-link"
+                    modifiers="{'invisible': [('flight_booking_id', '=', False)]}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Add a clickable booking reference in Purchase Order header -->
+    <record id="purchase_order_form_inherit_flight_booking" model="ir.ui.view">
+        <field name="name">purchase.order.form.flight.booking.inherit</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <field name="flight_booking_id" readonly="1" widget="many2one"/>
+                <button name="%(action_open_flight_booking_purchase)d" type="action" string="Open Booking" class="btn-link"
+                    modifiers="{'invisible': [('flight_booking_id', '=', False)]}"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <!-- Server action that calls the purchase order creation method on the booking -->
+    <record id="action_flight_booking_create_purchase_server" model="ir.actions.server">
+    <field name="name">Create Purchase Order (Server)</field>
+    <field name="model_id" ref="model_flight_booking"/>
+    <field name="binding_model_id" ref="model_flight_booking"/>
+    <field name="state">code</field>
+    <field name="code"># Inline purchase order creation to avoid depending on model method availability
+for rec in records:
+    if not rec.supplier_id:
+        raise Exception('No supplier configured for booking %s' % (rec.name or str(rec.id)))
+    PurchaseOrder = env['purchase.order']
+    PurchaseLine = env['purchase.order.line']
+    Product = env['product.product']
+    uom_unit = env.ref('uom.product_uom_unit', raise_if_not_found=False)
+    product = Product.search([('name', '=', 'Air Tickets')], limit=1)
+    if not product:
+        product = Product.create({
+            'name': 'Air Tickets',
+            'type': 'service',
+            'purchase_ok': True,
+            'invoice_policy': 'order',
+            'list_price': 0.0,
+        })
+    desc_lines = [
+        ('Carrier code: %s' % (rec.carrier_code or '')),
+        ('Ticket No: %s' % (rec.ticket_no or '')),
+        ('PNR: %s' % (rec.pnr or '')),
+        ('Passenger: %s' % (rec.passenger_name or '')),
+        ('Travel date: %s' % (rec.travel_date or '')),
+    ]
+    description = '\n'.join(desc_lines)
+    po_vals = {
+        'partner_id': rec.supplier_id.id,
+        'origin': (rec.name or False),
+    }
+    po = PurchaseOrder.create(po_vals)
+    # safe_eval environment does not provide getattr; use direct attribute access
+    price_for_supplier = rec.net_payable_to_supplier if rec.net_payable_to_supplier is not None else (rec.airline_total or 0.0)
+    line_vals = {
+        'order_id': po.id,
+        'product_id': product.id,
+        'name': description,
+        'product_qty': 1.0,
+        'product_uom_id': (product.uom_id.id if product.uom_id else (uom_unit.id if uom_unit else False)),
+        'price_unit': price_for_supplier,
+    }
+    allowed = set(PurchaseLine._fields.keys())
+    filtered = {k: v for k, v in line_vals.items() if k in allowed}
+    PurchaseLine.create([filtered])
+    try:
+        po.button_confirm()
+    except Exception:
+        try:
+            po.action_confirm()
+        except Exception:
+            pass
+    last_po = po
+action = {
+    'type': 'ir.actions.act_window',
+    'res_model': 'purchase.order',
+    'res_id': last_po.id,
+    'view_mode': 'form',
+    'target': 'current',
+}
+    </field>
+    </record>
+</odoo>
