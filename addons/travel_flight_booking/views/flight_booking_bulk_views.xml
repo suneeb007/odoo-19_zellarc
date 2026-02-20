@@ -29,5 +29,5 @@
   </record>
 
   <!-- Menu item under Air Tickets -->
-  <menuitem id="menu_flight_bulk_upload" name="Bulk Upload" parent="menu_travel_root" action="action_flight_booking_bulk_upload"/>
+  <menuitem id="menu_flight_bulk_upload" name="Bulk Upload" parent="travel_flight_booking.menu_travel_root" action="action_flight_booking_bulk_upload"/>
 </odoo>

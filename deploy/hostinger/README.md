@@ -1,47 +1,22 @@
-# Deploying Odoo on Hostinger KVM (no impact to other apps)
+# Hostinger VPS deploy (git + docker-compose)
 
-Summary
-- This directory contains a ready `docker-compose.hostinger.yml`, a `.env.hostinger` with DB credentials and host port choices, and a `start.sh` helper.
-- Compose uses separate container names, its own Docker network and non-default host ports (by default `18069` for Odoo and `15432` for Postgres) so it won't interfere with existing services.
+Copy `deploy/hostinger` to your VPS (or git clone this repo on the VPS) and then run `./start.sh`.
 
-Prepare on your local machine
-1. Optionally review and edit `.env.hostinger` to change `HOST_ODOO_PORT` and `HOST_PG_PORT` if those host ports conflict with existing services.
+Quick steps on the VPS:
 
-Copy to the VPS (example):
+1. Install Docker Engine and Docker Compose plugin.
+2. Copy this folder to `~/odoo-deploy` (or clone repository and keep files under that path).
+3. Edit `.env.hostinger` with production credentials (do NOT commit secrets).
+4. Run:
+
 ```bash
-# from your local repo root
-scp -r deploy/hostinger/ user@your-vps-ip:~/odoo-deploy
-ssh user@your-vps-ip
-```
-
-On the VPS (Debian/Ubuntu example)
-```bash
-# update and install docker + compose plugin
-sudo apt update
-sudo apt install -y docker.io docker-compose-plugin
-sudo systemctl enable --now docker
-
-# go to deployment dir created via scp
-cd ~/odoo-deploy
-
-# (optional) login to Docker Hub so private images can be pulled
-docker login
-
-# start the stack
-chmod +x start.sh
+cd ~/odoo-deploy/deploy/hostinger
 ./start.sh
-
-# check status
-docker compose -f docker-compose.hostinger.yml ps
-docker compose -f docker-compose.hostinger.yml logs -f odoo
 ```
 
-Firewall
-- If the VPS uses `ufw` open the chosen Odoo port (example):
-```bash
-sudo ufw allow 18069/tcp
-```
+Recommended nginx reverse-proxy (on the VPS) pointing to `127.0.0.1:${HOST_ODOO_PORT}` and obtain TLS with Certbot.
 
-Notes & troubleshooting
-- If you already run Postgres on the host and prefer to reuse it, remove the `db` service from the compose file and set `DB_HOST` to the host IP (and ensure port/credentials match).
-- The `.env.hostinger` file contains credentials; keep it private on the VPS.
+GitHub Actions:
+
+- Use `deploy/.github/workflows/deploy-odoo.yml` (created) which SSHes into the VPS and runs the compose update.
+- Set repository secrets `VPS_HOST`, `VPS_USER`, `VPS_SSH_KEY`, and `VPS_SSH_PORT` (use `deploy/hostinger/set_github_secrets.sh` to set them via `gh`).

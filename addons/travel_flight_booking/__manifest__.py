@@ -10,12 +10,12 @@
     "data": [
         "security/ir.model.access.csv",
         "data/sequence.xml",
-        "views/flight_booking_views.xml",
-        "views/order_inherit_views.xml",
-        "views/flight_booking_bulk_views.xml",
         "data/actions.xml",
         "data/open_booking_actions.xml",
         "data/open_order_from_booking.xml",
+        "views/flight_booking_views.xml",
+        "views/order_inherit_views.xml",
+        "views/flight_booking_bulk_views.xml",
     ],
     "images": [
         "static/description/icon-v2.png",
