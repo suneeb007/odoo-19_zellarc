@@ -31,7 +31,7 @@ services:
     volumes:
       - ./addons:/mnt/extra-addons:ro
     healthcheck:
-      test: ["CMD-SHELL", "wget -q -O- http://localhost:8069 || exit 1"]
+      test: ["CMD-SHELL", "python3 - <<'PY'\nimport socket, sys\ns=socket.socket()\ns.settimeout(1)\ntry:\n s.connect(('localhost', 8069))\n s.close()\nexcept Exception:\n sys.exit(1)\nPY"]
       interval: 10s
       timeout: 5s
       retries: 6
