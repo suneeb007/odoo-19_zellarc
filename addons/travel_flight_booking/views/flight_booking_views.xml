@@ -6,6 +6,8 @@
     <field name="view_mode">list,form</field>
     <field name="help">Create flight bookings and convert to sales orders.</field>
   </record>
+
+  <!-- Bulk upload wizard view and action moved to flight_booking_bulk_action.xml -->
   
     <!-- Customer commission views/actions -->
     <record id="view_flight_booking_customer_commission_tree" model="ir.ui.view">

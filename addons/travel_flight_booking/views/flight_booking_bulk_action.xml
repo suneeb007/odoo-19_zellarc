@@ -19,7 +19,11 @@
     </field>
   </record>
 
-  <!-- Action to open the wizard -->
-  <!-- Menu item under Air Tickets -->
-  <menuitem id="menu_flight_bulk_upload" name="Bulk Upload" parent="menu_travel_root" action="action_flight_booking_bulk_upload"/>
+  <record id="action_flight_booking_bulk_upload" model="ir.actions.act_window">
+    <field name="name">Bulk Upload Flight Bookings</field>
+    <field name="res_model">flight.booking.bulk.upload</field>
+    <field name="view_mode">form</field>
+    <field name="target">new</field>
+    <field name="view_id" ref="view_flight_booking_bulk_wizard"/>
+  </record>
 </odoo>

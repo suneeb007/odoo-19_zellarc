@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_lead_sequence_counter,access_lead_sequence_counter,model_lead_sequence_counter,,1,0,0,0

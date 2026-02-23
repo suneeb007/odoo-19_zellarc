@@ -29,7 +29,7 @@ services:
       USER: suneeb
       PASSWORD: "suneeb19931996@"
     volumes:
-      - ./addons:/mnt/extra-addons:ro
+      - ./addons:/mnt/extra-addons
     healthcheck:
       test: ["CMD-SHELL", "python3 - <<'PY'\nimport socket, sys\ns=socket.socket()\ns.settimeout(1)\ntry:\n s.connect(('localhost', 8069))\n s.close()\nexcept Exception:\n sys.exit(1)\nPY"]
       interval: 10s
