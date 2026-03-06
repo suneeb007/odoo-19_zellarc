@@ -20,8 +20,7 @@ services:
       db:
         condition: service_healthy
     ports:
-      - "8069:8069"
-      - "8072:8072"
+      - "8069:8069"      
     restart: unless-stopped
     environment:
       HOST: db
