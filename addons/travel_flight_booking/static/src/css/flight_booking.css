@@ -38,6 +38,42 @@
   padding: 6px 0;
 }
 
+/* Stat button tweaks: spacing, consistent min-width and aligned value/text */
+.flight_booking_form header .oe_stat_button {
+  min-width: 120px;
+  padding: 6px 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 4px;
+}
+.flight_booking_form header .oe_stat_button .o_field_widget.o_stat_info {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.flight_booking_form header .oe_stat_button .o_stat_value {
+  font-weight: 700;
+  display: inline-block;
+}
+.flight_booking_form header .oe_stat_button .o_stat_text {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+/* colored states for counts */
+.flight_booking_form header .oe_stat_button .o_stat_value.stat-zero {
+  color: #c0392b; /* red */
+}
+.flight_booking_form header .oe_stat_button .o_stat_value.stat-positive {
+  color: #27ae60; /* green */
+}
+
+/* Add a subtle separator between the action buttons and primary actions */
+.flight_booking_form header .btn.btn-secondary + .oe_stat_button {
+  margin-left: 8px;
+}
+
 .flight_booking_form header .o_form_button_primary,
 .flight_booking_form header .btn.btn-primary.o_form_button_primary {
   margin: 0;

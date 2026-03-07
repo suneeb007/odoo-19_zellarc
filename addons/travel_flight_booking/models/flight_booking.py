@@ -20,6 +20,28 @@ class FlightBooking(models.Model):
     airline_pnr = fields.Char(string="Airline PNR", required=True)
     sectors = fields.Text(string="Sectors", required=True)
     travel_date = fields.Date(string="Travel Date", required=True)
+    # link to originating CRM lead (optional)
+    lead_id = fields.Many2one('crm.lead', string='Lead', ondelete='set null')
+    lead_number = fields.Char(string='Lead Number', compute='_compute_lead_number', readonly=True, store=True)
+
+    @api.depends('lead_id')
+    def _compute_lead_number(self):
+        for rec in self:
+            if rec.lead_id:
+                rec.lead_number = getattr(rec.lead_id, 'lead_number', False)
+            else:
+                rec.lead_number = False
+
+    @api.model
+    def default_get(self, fields):
+        res = super(FlightBooking, self).default_get(fields)
+        # When opened from a lead (we pass default_lead_id in context), ensure PNR and carrier are blank
+        if self.env.context.get('default_lead_id'):
+            if 'airline_pnr' in res:
+                res['airline_pnr'] = False
+            if 'carrier_code' in res:
+                res['carrier_code'] = False
+        return res
     ticket_type = fields.Selection([
         ('lcc','LCC'), ('full','Full service'), ('group','Group Ticket'), ('labour','Labour fare'),
         ('ad','AD Ticket'), ('seaman','Seaman Fare')

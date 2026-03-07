@@ -8,8 +8,7 @@
         <field name="arch" type="xml">
             <xpath expr="//header" position="inside">
                 <field name="flight_booking_id" readonly="1" widget="many2one"/>
-                <button name="%(action_open_flight_booking_sale)d" type="action" string="Open Booking" class="btn-link"
-                    modifiers="{'invisible': [('flight_booking_id', '=', False)]}"/>
+                <!-- Removed Open Booking button per request -->
             </xpath>
         </field>
     </record>

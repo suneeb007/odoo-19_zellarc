@@ -26,6 +26,7 @@
             "travel_flight_booking/static/src/css/flight_booking.css",
             "travel_flight_booking/static/src/js/bulk_button_list.js",
             "travel_flight_booking/static/src/js/bulk_download_wizard.js",
+            "travel_flight_booking/static/src/js/stat_color.js",
         ],
     },
     "installable": True,

@@ -9,8 +9,19 @@
       <xpath expr="//div[contains(@class,'oe_title')]" position="before">
         <field class="fw-bold fs-1" name="lead_number" readonly="1"/>
       </xpath>
-      <xpath expr="//field[@name='lead_number']" position="after">
-        <field name="service_type" class="ms-3"/>
+      <xpath expr="//group[@name='opportunity_partner']//field[@name='phone']" position="after">
+        <label for="service_type" string="Service type" class="oe_inline fw-bold"/>
+        <field name="service_type" class="ms-3" nolabel="1"/>
+      </xpath>
+      <xpath expr="//group[@name='opportunity_partner']//field[@name='partner_id']" position="after">
+        <field name="sale_order_id" readonly="1" options="{'no_open': False}"/>
+      </xpath>
+      
+      <xpath expr="//form/sheet" position="inside">
+        <div class="mt-3 d-flex justify-content-end">
+          <button name="open_flight_ops" type="object" string="Flight OPS" class="btn btn-primary"
+            invisible="service_type != 'air_ticket' or flight_booking_id"/>
+        </div>
       </xpath>
     </field>
   </record>
@@ -27,5 +38,6 @@
       </xpath>
     </field>
   </record>
+
 </odoo>
 

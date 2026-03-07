@@ -43,29 +43,6 @@ services:
       timeout: 5s
       retries: 6
 
-  odoo-init:
-    image: odoo:19.0
-    depends_on:
-      db:
-        condition: service_healthy
-    restart: "no"
-    environment:
-      HOST: db
-      USER: suneeb
-      PASSWORD: "suneeb19931996@"
-      DB_HOST: db
-      DB_PORT: 5432
-      DB_USER: suneeb
-      DB_PASSWORD: "suneeb19931996@"
-      PGHOST: db
-      PGPORT: 5432
-      PGUSER: suneeb
-      PGPASSWORD: "suneeb19931996@"
-    volumes:
-      - ./addons:/mnt/extra-addons
-    entrypoint: ["/bin/bash", "-c"]
-    command: >
-      odoo -d zellarc_technologies -i base --stop-after-init || true
 
 volumes:
   db_data:

@@ -170,6 +170,8 @@
                 <group>
                   <field name="passenger_name"/>
                   <field name="client_id"/>
+                  <field name="lead_id" options="{'no_create': True}"/>
+                  <field name="lead_number" readonly="1"/>
                 </group>
               </page>
               <page string="Flight Info" icon="fa-plane">
