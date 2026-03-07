@@ -87,7 +87,7 @@
       <field name="context">{}</field>
     </record>
 
-  <menuitem id="menu_travel_root" name="Air Tickets" sequence="90"/>
+  <menuitem id="menu_travel_root" name="Air Tickets" sequence="90" web_icon="travel_flight_booking,static/description/icon-v2.png"/>
   <menuitem id="menu_travel_sales" name="Flight Bookings" parent="menu_travel_root" action="action_flight_bookings"/>
 
   <record id="view_flight_booking_tree" model="ir.ui.view">

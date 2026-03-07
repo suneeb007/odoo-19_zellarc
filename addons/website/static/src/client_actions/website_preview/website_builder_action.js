@@ -376,7 +376,13 @@ export class WebsiteBuilderClientAction extends Component {
         // If we detect that behavior, we reload the iframe with a new query
         // parameter, so that it's not cached for Chrome.
         const iframe = this.websiteContent.el;
-        iframe.contentDocument.body.setAttribute("is-ready", "false");
+        const iframeDoc = iframe && iframe.contentDocument;
+        const iframeWin = iframe && iframe.contentWindow;
+        if (!iframeDoc || !iframeWin) {
+            // iframe not ready or not accessible (cross-origin); bail out safely
+            return;
+        }
+        iframeDoc.body.setAttribute("is-ready", "false");
         if (isBrowserChrome() && !iframe.src.includes("iframe_reload")) {
             try {
                 /* eslint-disable no-unused-expressions */
@@ -399,12 +405,12 @@ export class WebsiteBuilderClientAction extends Component {
                 }
             }
         }
-        if (this.lastPageURL !== iframe.contentWindow.location.href) {
+        if (this.lastPageURL !== iframeWin.location.href) {
             // Hide Ace Editor when moving to another page.
             this.websiteService.context.showResourceEditor = false;
         }
-        this.websiteService.pageDocument = this.websiteContent.el.contentDocument;
-        const url = new URL(this.websiteService.contentWindow.location.href);
+        this.websiteService.pageDocument = iframeDoc;
+        const url = new URL(this.websiteService.contentWindow ? this.websiteService.contentWindow.location.href : iframeWin.location.href);
         if (url.searchParams.has("edit_translations")) {
             deleteQueryParam("edit_translations", this.websiteService.contentWindow, true);
         }
@@ -416,7 +422,7 @@ export class WebsiteBuilderClientAction extends Component {
         this.resolveIframeLoaded();
         this.addWelcomeMessage();
         this.websiteService.hideLoader();
-        this.lastPageURL = iframe.contentWindow.location.href;
+        this.lastPageURL = iframeWin.location.href;
 
         if (this.isNavigatingToAnotherPage) {
             this.isNavigatingToAnotherPage.resolve();
