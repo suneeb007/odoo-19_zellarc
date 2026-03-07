@@ -14,6 +14,32 @@ services:
       timeout: 5s
       retries: 5
 
+  odoo-init:
+    image: odoo:19.0
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: "no"
+    environment:
+      POSTGRES_DB: zellarc_technologies
+      POSTGRES_USER: suneeb
+      POSTGRES_PASSWORD: "suneeb19931996@"
+      PGHOST: db
+      PGPORT: 5432
+      PGUSER: suneeb
+      PGPASSWORD: "suneeb19931996@"
+    volumes:
+      - ./addons:/mnt/extra-addons
+    entrypoint: ["/bin/sh","-c"]
+    command: |
+      set -e
+      echo "Setting ownership of /mnt/extra-addons to uid 1000..."
+      chown -R 1000:1000 /mnt/extra-addons || true
+      echo "Waiting briefly for database..."
+      sleep 5
+      echo "Running Odoo module update (one-shot)..."
+      odoo -d "${POSTGRES_DB:-zellarc_technologies}" -u all --stop-after-init || true
+
   odoo:
     image: odoo:19.0
     depends_on:
