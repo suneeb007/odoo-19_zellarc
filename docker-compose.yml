@@ -29,7 +29,7 @@ services:
       PGUSER: suneeb
       PGPASSWORD: "suneeb19931996@"
     volumes:
-      - ./addons:/mnt/extra-addons
+      - ${HOST_ADDONS:-./addons}:/mnt/extra-addons
     entrypoint: ["/bin/sh","-c"]
     command: |
       set -e
@@ -62,7 +62,7 @@ services:
       PGUSER: suneeb
       PGPASSWORD: "suneeb19931996@"
     volumes:
-      - ./addons:/mnt/extra-addons
+      - ${HOST_ADDONS:-./addons}:/mnt/extra-addons
     healthcheck:
       test: ["CMD-SHELL", "python3 - <<'PY'\nimport socket, sys\ns=socket.socket()\ns.settimeout(1)\ntry:\n s.connect(('localhost', 8069))\n s.close()\nexcept Exception:\n sys.exit(1)\nPY"]
       interval: 10s
