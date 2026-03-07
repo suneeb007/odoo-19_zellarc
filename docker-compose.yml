@@ -1,0 +1,72 @@
+services:
+  db:
+    image: postgres:15
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: zellarc_technologies
+      POSTGRES_USER: suneeb
+      POSTGRES_PASSWORD: "suneeb19931996@"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  odoo:
+    image: odoo:19.0
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8069:8069"  
+      - "8072:8072"    
+    restart: unless-stopped
+    environment:
+      HOST: db
+      USER: suneeb
+      PASSWORD: "suneeb19931996@"
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: suneeb
+      DB_PASSWORD: "suneeb19931996@"
+      PGHOST: db
+      PGPORT: 5432
+      PGUSER: suneeb
+      PGPASSWORD: "suneeb19931996@"
+    volumes:
+      - ./addons:/mnt/extra-addons
+    healthcheck:
+      test: ["CMD-SHELL", "python3 - <<'PY'\nimport socket, sys\ns=socket.socket()\ns.settimeout(1)\ntry:\n s.connect(('localhost', 8069))\n s.close()\nexcept Exception:\n sys.exit(1)\nPY"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+
+  odoo-init:
+    image: odoo:19.0
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: "no"
+    environment:
+      HOST: db
+      USER: suneeb
+      PASSWORD: "suneeb19931996@"
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: suneeb
+      DB_PASSWORD: "suneeb19931996@"
+      PGHOST: db
+      PGPORT: 5432
+      PGUSER: suneeb
+      PGPASSWORD: "suneeb19931996@"
+    volumes:
+      - ./addons:/mnt/extra-addons
+    entrypoint: ["/bin/bash", "-c"]
+    command: >
+      odoo -d zellarc_technologies -i base --stop-after-init || true
+
+volumes:
+  db_data:
+    driver: local

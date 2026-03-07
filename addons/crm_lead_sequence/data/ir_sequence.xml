@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data noupdate="1">
+    <record id="seq_crm_lead_ln" model="ir.sequence">
+      <field name="name">Lead LN Sequence</field>
+      <field name="code">crm.lead.ln</field>
+      <field name="prefix">LN</field>
+      <field name="padding">1</field>
+      <field name="implementation">no_gap</field>
+      <field name="use_date_range">False</field>
+    </record>
+  </data>
+</odoo>

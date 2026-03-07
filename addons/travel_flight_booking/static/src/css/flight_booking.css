@@ -1,0 +1,49 @@
+.o_total_fare {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #0b6fa2;
+  padding: 4px 6px;
+  border-radius: 4px;
+}
+
+/* Scoped layout for flight booking form: sheet on left, chatter sidebar on right */
+.flight_booking_form {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.flight_booking_form .o_form_sheet_bg {
+  flex: 1 1 auto;
+  min-width: 0; /* allow contents to shrink, prevents overflow */
+}
+
+.flight_booking_form .oe_chatter {
+  flex: 0 0 320px;
+  max-width: 320px;
+}
+
+/* make chatter widgets stack neatly */
+.flight_booking_form .oe_chatter .o_mail_thread {
+  max-height: calc(100vh - 220px);
+  overflow: auto;
+}
+
+/* place header button on the left for this form */
+.flight_booking_form header {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+}
+
+.flight_booking_form header .o_form_button_primary,
+.flight_booking_form header .btn.btn-primary.o_form_button_primary {
+  margin: 0;
+}
+
+/* ensure header buttons area does not get overridden by generic styles */
+.flight_booking_form .o_form_buttons {
+  justify-content: flex-start !important;
+}

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="view_crm_lead_form_inherit_seq" model="ir.ui.view">
+    <field name="name">crm.lead.form.inherit.lead_number</field>
+    <field name="model">crm.lead</field>
+    <field name="inherit_id" ref="crm.crm_lead_view_form"/>
+    <field name="arch" type="xml">
+      <!-- insert lead_number above the title block -->
+      <xpath expr="//div[contains(@class,'oe_title')]" position="before">
+        <field class="fw-bold fs-1" name="lead_number" readonly="1"/>
+      </xpath>
+    </field>
+  </record>
+
+ 
+  <record id="view_crm_lead_kanban_inherit_lead_number" model="ir.ui.view">
+    <field name="name">crm.lead.kanban.inherit.lead_number</field>
+    <field name="model">crm.lead</field>
+    <field name="inherit_id" ref="crm.crm_case_kanban_view_leads"/>
+    <field name="arch" type="xml">
+      <!-- place lead_number below the title field with matching styling -->
+      <xpath expr="//field[@name='name' and contains(@class,'fw-bold')]" position="after">
+        <field class="fw-bold fs-6" name="lead_number" readonly="1"/>
+      </xpath>
+    </field>
+  </record>
+</odoo>
+
