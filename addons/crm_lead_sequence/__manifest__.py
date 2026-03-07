@@ -4,10 +4,10 @@
     "summary": "Add unique LN number to leads (format LNDDMMYYN)",
     "category": "CRM",
     "author": "Auto",
-    "depends": ["crm"],
+    "depends": ["crm", "travel_flight_booking"],
     "data": [
         "data/ir_sequence.xml",
-        "views/crm_lead_views.xml",
+        "views/crm_lead_sequence_views.xml",
     ],
     "installable": True,
     "application": False,

@@ -9,6 +9,9 @@
       <xpath expr="//div[contains(@class,'oe_title')]" position="before">
         <field class="fw-bold fs-1" name="lead_number" readonly="1"/>
       </xpath>
+      <xpath expr="//field[@name='lead_number']" position="after">
+        <field name="service_type" class="ms-3"/>
+      </xpath>
     </field>
   </record>
 
