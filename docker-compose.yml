@@ -3,9 +3,9 @@ services:
     image: postgres:15
     restart: unless-stopped
     environment:
-      POSTGRES_DB: zellarc_technologies
-      POSTGRES_USER: suneeb
-      POSTGRES_PASSWORD: "suneeb19931996@"
+      POSTGRES_DB: ${POSTGRES_DB:-zellarc_technologies}
+      POSTGRES_USER: ${POSTGRES_USER:-suneeb}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-suneeb19931996@}
     volumes:
       - db_data:/var/lib/postgresql/data
     healthcheck:
@@ -14,55 +14,42 @@ services:
       timeout: 5s
       retries: 5
 
-  odoo-init:
-    image: odoo:19.0
-    depends_on:
-      db:
-        condition: service_healthy
-    restart: "no"
-    environment:
-      POSTGRES_DB: zellarc_technologies
-      POSTGRES_USER: suneeb
-      POSTGRES_PASSWORD: "suneeb19931996@"
-      PGHOST: db
-      PGPORT: 5432
-      PGUSER: suneeb
-      PGPASSWORD: "suneeb19931996@"
-    volumes:
-      - ${HOST_ADDONS:-./addons}:/mnt/extra-addons
-    entrypoint: ["/bin/sh","-c"]
-    command: |
-      set -e
-      echo "Setting ownership of /mnt/extra-addons to uid 1000..."
-      chown -R 1000:1000 /mnt/extra-addons || true
-      echo "Waiting briefly for database..."
-      sleep 5
-      echo "Running Odoo module update (one-shot)..."
-      odoo -d "${POSTGRES_DB:-zellarc_technologies}" -u all --stop-after-init || true
 
   odoo:
-    image: odoo:19.0
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: local/odoo:19.0
     depends_on:
       db:
         condition: service_healthy
     ports:
-      - "8069:8069"  
-      - "8072:8072"    
+      - "${HOST_ODOO_PORT:-8069}:8069"
+      - "${HOST_LONGPOLLING_PORT:-8072}:8072"
     restart: unless-stopped
+    command:
+      - odoo
+      - --db_host=${DB_HOST:-db}
+      - --db_port=${DB_PORT:-5432}
+      - --db_user=${DB_USER:-${POSTGRES_USER:-suneeb}}
+      - --db_password=${DB_PASSWORD:-${POSTGRES_PASSWORD:-suneeb19931996@}}
+      - --addons-path=/mnt/extra-addons,/usr/lib/python3/dist-packages/odoo/addons
+      - --data-dir=/var/lib/odoo
     environment:
-      HOST: db
-      USER: suneeb
-      PASSWORD: "suneeb19931996@"
-      DB_HOST: db
-      DB_PORT: 5432
-      DB_USER: suneeb
-      DB_PASSWORD: "suneeb19931996@"
-      PGHOST: db
-      PGPORT: 5432
-      PGUSER: suneeb
-      PGPASSWORD: "suneeb19931996@"
+      HOST: ${DB_HOST:-db}
+      USER: ${DB_USER:-${POSTGRES_USER:-suneeb}}
+      PASSWORD: ${DB_PASSWORD:-${POSTGRES_PASSWORD:-suneeb19931996@}}
+      DB_HOST: ${DB_HOST:-db}
+      DB_PORT: ${DB_PORT:-5432}
+      DB_USER: ${DB_USER:-${POSTGRES_USER:-suneeb}}
+      DB_PASSWORD: ${DB_PASSWORD:-${POSTGRES_PASSWORD:-suneeb19931996@}}
+      PGHOST: ${DB_HOST:-db}
+      PGPORT: ${DB_PORT:-5432}
+      PGUSER: ${DB_USER:-${POSTGRES_USER:-suneeb}}
+      PGPASSWORD: ${DB_PASSWORD:-${POSTGRES_PASSWORD:-suneeb19931996@}}
     volumes:
       - ${HOST_ADDONS:-./addons}:/mnt/extra-addons
+      - odoo_data:/var/lib/odoo
     healthcheck:
       test: ["CMD-SHELL", "python3 - <<'PY'\nimport socket, sys\ns=socket.socket()\ns.settimeout(1)\ntry:\n s.connect(('localhost', 8069))\n s.close()\nexcept Exception:\n sys.exit(1)\nPY"]
       interval: 10s
@@ -72,4 +59,6 @@ services:
 
 volumes:
   db_data:
+    driver: local
+  odoo_data:
     driver: local
