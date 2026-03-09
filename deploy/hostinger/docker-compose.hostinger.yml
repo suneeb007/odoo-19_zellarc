@@ -29,6 +29,7 @@ services:
       - --db_port=5432
       - --db_user=${DB_USER:-${POSTGRES_USER}}
       - --db_password=${DB_PASSWORD:-${POSTGRES_PASSWORD}}
+      - --proxy-mode
       - --addons-path=/mnt/extra-addons,/usr/lib/python3/dist-packages/odoo/addons
       - --data-dir=/var/lib/odoo
     environment:
