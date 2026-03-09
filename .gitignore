@@ -51,3 +51,16 @@ package.json
 /man/
 /share/
 /src/
+
+# PGDATA
+/pgdata/
+
+# local database backups
+/*.sql
+/*.dump
+/*.backup
+
+# hostinger deployment secrets and runtime data
+/deploy/hostinger/.env.hostinger
+!/deploy/hostinger/.env.hostinger.example
+/deploy/hostinger/data/
